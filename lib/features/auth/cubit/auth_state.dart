@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../core/utils/app_role.dart';
+
 abstract class AuthState extends Equatable {
   const AuthState();
 
@@ -37,15 +39,15 @@ class OtpError extends AuthState {
   List<Object?> get props => [message];
 }
 
-class Authenticated extends AuthState {
-  const Authenticated({required this.role});
+class AuthAuthenticated extends AuthState {
+  const AuthAuthenticated({required this.role});
 
-  final String role;
+  final AppRole role;
 
   @override
   List<Object?> get props => [role];
 }
 
-class Unauthenticated extends AuthState {
-  const Unauthenticated();
+class AuthUnauthenticated extends AuthState {
+  const AuthUnauthenticated();
 }

@@ -1,16 +1,28 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/utils/app_role.dart';
 import '../../../core/utils/app_session.dart';
 import 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit() : super(const AuthInitial());
+  AuthCubit() : super(const AuthInitial()) {
+    restoreSession();
+  }
 
-  String _selectedRole = 'patient';
+  AppRole _selectedRole = AppRole.user;
 
-  String get selectedRole => _selectedRole;
+  AppRole get currentUserRole => _selectedRole;
 
-  void setRole(String role) {
+  Future<void> restoreSession() async {
+    if (AppSession.isLoggedIn) {
+      _selectedRole = AppSession.currentUserRole;
+      emit(AuthAuthenticated(role: _selectedRole));
+      return;
+    }
+    emit(const AuthUnauthenticated());
+  }
+
+  void setRole(AppRole role) {
     _selectedRole = role;
   }
 
@@ -25,7 +37,7 @@ class AuthCubit extends Cubit<AuthState> {
     await Future<void>.delayed(const Duration(seconds: 2));
     if (otp.length == 6) {
       await AppSession.persistLogin(role: _selectedRole, phone: phone);
-      emit(Authenticated(role: _selectedRole));
+      emit(AuthAuthenticated(role: _selectedRole));
     } else {
       emit(const OtpError(message: 'Invalid OTP. Try 123456 for demo.'));
     }
@@ -33,6 +45,6 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> logout() async {
     await AppSession.clear();
-    emit(const Unauthenticated());
+    emit(const AuthUnauthenticated());
   }
 }

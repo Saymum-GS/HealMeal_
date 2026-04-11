@@ -1,5 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'app_role.dart';
+
 class AppSession {
   AppSession._();
 
@@ -13,18 +15,21 @@ class AppSession {
 
   static bool get isLoggedIn => _prefs?.getBool('is_logged_in') ?? false;
 
-  static String get role => _prefs?.getString('user_role') ?? 'patient';
+  static AppRole get currentUserRole =>
+      AppRole.fromStorage(_prefs?.getString('user_role'));
+
+  static String get roleId => currentUserRole.id;
 
   static String? get phone => _prefs?.getString('user_phone');
 
   static Future<void> persistLogin({
-    required String role,
+    required AppRole role,
     required String phone,
   }) async {
     final prefs = _prefs ?? await SharedPreferences.getInstance();
     _prefs = prefs;
     await prefs.setBool('is_logged_in', true);
-    await prefs.setString('user_role', role);
+    await prefs.setString('user_role', role.id);
     await prefs.setString('user_phone', phone);
   }
 
@@ -36,20 +41,7 @@ class AppSession {
     await prefs.remove('user_phone');
   }
 
-  static String homeRouteForRole(String role) {
-    switch (role) {
-      case 'pharmacist':
-        return '/pharmacist';
-      case 'rider':
-        return '/rider';
-      case 'admin':
-        return '/admin';
-      case 'lab_tech':
-        return '/lab-tech';
-      case 'business':
-        return '/account/business';
-      default:
-        return '/home';
-    }
+  static String homeRouteForRole(AppRole role) {
+    return role.homeRoute;
   }
 }

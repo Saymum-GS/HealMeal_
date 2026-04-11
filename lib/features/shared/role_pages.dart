@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -13,6 +14,7 @@ import '../../core/widgets/common/healmeal_app_bar.dart';
 import '../../core/widgets/common/healmeal_button.dart';
 import '../../core/widgets/common/healmeal_text_field.dart';
 import '../../core/widgets/common/status_badge.dart';
+import '../auth/cubit/auth_cubit.dart';
 
 MockOrder _findOrderByRouteId(String id) {
   final String normalized = id
@@ -25,6 +27,13 @@ MockOrder _findOrderByRouteId(String id) {
         normalized,
     orElse: () => mockOrders.first,
   );
+}
+
+Future<void> _logout(BuildContext context) async {
+  await context.read<AuthCubit>().logout();
+  if (context.mounted) {
+    context.go('/login');
+  }
 }
 
 class PharmacistDashboardScreen extends StatelessWidget {
@@ -44,8 +53,9 @@ class PharmacistDashboardScreen extends StatelessWidget {
               icon: const Icon(Icons.notifications_none_rounded),
             ),
             IconButton(
-              onPressed: () => context.go('/login'),
+              onPressed: () => _logout(context),
               icon: const Icon(Icons.logout_rounded),
+              tooltip: 'Logout',
             ),
           ],
           bottom: const TabBar(
@@ -262,6 +272,13 @@ class RiderDashboardScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('HealMeal - Rider'),
+          actions: <Widget>[
+            IconButton(
+              onPressed: () => _logout(context),
+              icon: const Icon(Icons.logout_rounded),
+              tooltip: 'Logout',
+            ),
+          ],
           bottom: const TabBar(
             tabs: <Tab>[
               Tab(text: 'Assigned (2)'),
@@ -440,7 +457,16 @@ class AdminDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('HealMeal - Admin')),
+      appBar: AppBar(
+        title: const Text('HealMeal - Admin'),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () => _logout(context),
+            icon: const Icon(Icons.logout_rounded),
+            tooltip: 'Logout',
+          ),
+        ],
+      ),
       drawer: Drawer(
         child: ListView(
           children: const <Widget>[
@@ -542,7 +568,7 @@ class AdminDashboardScreen extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xl),
           Text(
-            'Admin panel - full functionality requires backend integration',
+            'Demo mode: admin actions use local app data for a stable role flow.',
             style: AppTextStyles.bodySmall.copyWith(color: AppColors.secondary),
             textAlign: TextAlign.center,
           ),
@@ -563,6 +589,13 @@ class LabTechDashboardScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('HealMeal - Lab Tech'),
+          actions: <Widget>[
+            IconButton(
+              onPressed: () => _logout(context),
+              icon: const Icon(Icons.logout_rounded),
+              tooltip: 'Logout',
+            ),
+          ],
           bottom: const TabBar(
             isScrollable: true,
             tabs: <Tab>[
@@ -661,7 +694,16 @@ class BusinessDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('HealMeal Business')),
+      appBar: AppBar(
+        title: const Text('HealMeal Business'),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () => _logout(context),
+            icon: const Icon(Icons.logout_rounded),
+            tooltip: 'Logout',
+          ),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.lg),
         children: <Widget>[
@@ -716,7 +758,13 @@ class BusinessDashboardScreen extends StatelessWidget {
                 HealMealButton(
                   label: 'Create Manual Order',
                   type: ButtonType.outlined,
-                  onPressed: () => context.push('/products'),
+                  onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Business users stay inside the dedicated business flow in demo mode.',
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -739,7 +787,7 @@ class BusinessDashboardScreen extends StatelessWidget {
                   Text(order.id, style: AppTextStyles.labelLarge),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    'Bulk Order • Priority Delivery',
+                    'Bulk Order â€¢ Priority Delivery',
                     style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.primary,
                     ),

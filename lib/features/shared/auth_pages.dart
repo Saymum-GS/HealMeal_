@@ -12,6 +12,7 @@ import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text_styles.dart';
 import '../../core/localization/app_localizations.dart';
 import '../../core/mock_data/mock_models.dart';
+import '../../core/utils/app_role.dart';
 import '../../core/utils/app_session.dart';
 import '../../core/utils/app_validators.dart';
 import '../../core/widgets/common/healmeal_button.dart';
@@ -19,7 +20,7 @@ import '../../core/widgets/common/healmeal_text_field.dart';
 import '../auth/cubit/auth_cubit.dart';
 import '../auth/cubit/auth_state.dart';
 
-String routeForRole(String role) {
+String routeForRole(AppRole role) {
   return AppSession.homeRouteForRole(role);
 }
 
@@ -42,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!mounted) return;
     final prefs = await SharedPreferences.getInstance();
     final isLoggedIn = AppSession.isLoggedIn;
-    final role = AppSession.role;
+    final role = AppSession.currentUserRole;
     final firstLaunch = prefs.getBool('first_launch');
     if (isLoggedIn) {
       context.go(routeForRole(role));
@@ -272,14 +273,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _phoneController = TextEditingController();
 
-  final roles = const [
-    ('patient', 'Patient'),
-    ('pharmacist', 'Pharmacist'),
-    ('rider', 'Rider'),
-    ('admin', 'Admin'),
-    ('lab_tech', 'Lab Tech'),
-    ('business', 'Business'),
-  ];
+  final roles = AppRole.values;
 
   @override
   void dispose() {
@@ -383,13 +377,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               itemBuilder: (context, index) {
                                 final role = roles[index];
                                 final selected =
-                                    role.$1 == authCubit.selectedRole;
+                                    role == authCubit.currentUserRole;
                                 return ChoiceChip(
-                                  label: Text(role.$2),
+                                  label: Text(role.label),
                                   selected: selected,
-                                  onSelected: (_) => setState(
-                                    () => authCubit.setRole(role.$1),
-                                  ),
+                                  onSelected: (_) =>
+                                      setState(() => authCubit.setRole(role)),
                                 );
                               },
                               separatorBuilder: (_, __) =>
@@ -523,7 +516,7 @@ class _OtpScreenState extends State<OtpScreen> {
             context,
           ).showSnackBar(SnackBar(content: Text(state.message)));
         }
-        if (state is Authenticated) {
+        if (state is AuthAuthenticated) {
           context.go(routeForRole(state.role));
         }
       },

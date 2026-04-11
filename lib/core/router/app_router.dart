@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 
+import '../utils/app_role.dart';
 import '../utils/app_session.dart';
 import '../../features/account/account_screen.dart';
 import '../../features/account/account_settings_screen.dart';
@@ -131,21 +132,24 @@ bool _isPatientArea(String location) {
   return false;
 }
 
-bool _canAccessRoleArea(String role, String location) {
-  if (_isRolePrefix(location, '/pharmacist')) return role == 'pharmacist';
-  if (_isRolePrefix(location, '/rider')) return role == 'rider';
-  if (_isRolePrefix(location, '/admin')) return role == 'admin';
-  if (_isRolePrefix(location, '/lab-tech')) return role == 'lab_tech';
-  if (_isRolePrefix(location, '/account/business')) return role == 'business';
+bool _canAccessRoleArea(AppRole role, String location) {
+  if (_isRolePrefix(location, '/pharmacist')) return role == AppRole.pharmacist;
+  if (_isRolePrefix(location, '/rider')) return role == AppRole.rider;
+  if (_isRolePrefix(location, '/admin')) return role == AppRole.admin;
+  if (_isRolePrefix(location, '/lab-tech')) return role == AppRole.labTech;
+  if (_isRolePrefix(location, '/account/business')) {
+    return role == AppRole.business;
+  }
   return true;
 }
 
-bool _canAccessPatientArea(String role) {
-  return role == 'patient' || role == 'business';
+bool _canAccessPatientArea(AppRole role) {
+  return role == AppRole.user;
 }
 
 String? _redirectGuard(GoRouterState state) {
   final String location = state.uri.path;
+  final AppRole role = AppSession.currentUserRole;
 
   if (!_isPublicLocation(location) && !AppSession.isLoggedIn) {
     return '/login';
@@ -153,16 +157,15 @@ String? _redirectGuard(GoRouterState state) {
 
   if (AppSession.isLoggedIn &&
       _authEntryRoutes.any((String route) => _matchesPath(location, route))) {
-    return AppSession.homeRouteForRole(AppSession.role);
+    return AppSession.homeRouteForRole(role);
   }
 
-  if (_isRestrictedStaffArea(location) &&
-      !_canAccessRoleArea(AppSession.role, location)) {
-    return AppSession.homeRouteForRole(AppSession.role);
+  if (_isRestrictedStaffArea(location) && !_canAccessRoleArea(role, location)) {
+    return AppSession.homeRouteForRole(role);
   }
 
-  if (_isPatientArea(location) && !_canAccessPatientArea(AppSession.role)) {
-    return AppSession.homeRouteForRole(AppSession.role);
+  if (_isPatientArea(location) && !_canAccessPatientArea(role)) {
+    return AppSession.homeRouteForRole(role);
   }
 
   return null;
