@@ -11,6 +11,12 @@
 .buildlog/
 .swiftpm/
 migrate_working_dir/
+archive/
+*.zip
+*.rar
+*.7z
+build_errors.txt
+build_errors_2.txt
 
 # IDE
 .idea/
@@ -61,3 +67,9 @@ app.*.map.json
 key.properties
 google-services.json
 GoogleService-Info.plist
+.firebase/
+.firebaserc
+firebase.json
+firestore.indexes.json
+firestore.rules
+lib/firebase_options.dart

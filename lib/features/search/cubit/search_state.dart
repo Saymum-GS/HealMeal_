@@ -11,12 +11,12 @@ class SearchState extends Equatable {
 
   final SearchStatus status;
   final String query;
-  final List<MockProduct> results;
+  final List<Product> results;
 
   SearchState copyWith({
     SearchStatus? status,
     String? query,
-    List<MockProduct>? results,
+    List<Product>? results,
   }) {
     return SearchState(
       status: status ?? this.status,
@@ -28,3 +28,4 @@ class SearchState extends Equatable {
   @override
   List<Object?> get props => [status, query, results];
 }
+

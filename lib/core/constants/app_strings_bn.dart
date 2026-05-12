@@ -245,4 +245,167 @@ class AppStringsBn extends AppStrings {
   String get parent => 'অভিভাবক';
   @override
   String get child => 'সন্তান';
+  @override
+  String get login => 'লগ ইন';
+  @override
+  String get phoneNumber => 'ফোন নম্বর';
+  @override
+  String get enterNumber => 'আপনার নম্বর দিন';
+  @override
+  String get sortBy => 'সর্ট করুন';
+  @override
+  String get relevance => 'প্রাসঙ্গিকতা';
+  @override
+  String get priceLowToHigh => 'দাম: কম থেকে বেশি';
+  @override
+  String get priceHighToLow => 'দাম: বেশি থেকে কম';
+  @override
+  String get topRated => 'সেরা রেটিং';
+  @override
+  String get newestArrivals => 'নতুন পণ্য';
+  @override
+  String get nameAZ => 'নাম: A-Z';
+  @override
+  String get biggestDiscount => 'সেরা ডিসকাউন্ট';
+  @override
+  String get seasonalCampaign => 'ঋতুভিত্তিক ক্যাম্পেইন';
+  @override
+  String get upTo60Off => '৬০% পর্যন্ত ছাড়';
+  @override
+  String get number1Platform => '#১ প্ল্যাটফর্ম';
+  @override
+  String get trustedMedicineAndCare => 'নির্ভরযোগ্য ওষুধ ও সেবা';
+  @override
+  String get assignRider => 'রাইডার নিয়োগ';
+  @override
+  String get approveRx => 'প্রেসক্রিপশন অনুমোদন';
+  @override
+  String get manageCategories => 'ক্যাটাগরি পরিচালনা';
+  @override
+  String get manageUsers => 'ইউজার পরিচালনা';
+  @override
+  String get addProduct => 'পণ্য যোগ করুন';
+  @override
+  String get manageOffers => 'অফার পরিচালনা';
+  @override
+  String get selectDeliveryAddress => 'ডেলিভারি ঠিকানা নির্বাচন করুন';
+  @override
+  String get selectPaymentMethod => 'পেমেন্ট পদ্ধতি নির্বাচন করুন';
+  @override
+  String get orderReview => 'অর্ডার রিভিউ';
+  @override
+  String get address => 'ঠিকানা';
+  @override
+  String get slot => 'সময়';
+  @override
+  String get coupon => 'কুপন';
+  @override
+  String get payment => 'পেমেন্ট';
+  @override
+  String get review => 'রিভিউ';
+  @override
+  String get placingOrder => 'অর্ডার পাঠানো হচ্ছে...';
+  @override
+  String get processingPayment => 'পেমেন্ট প্রসেস হচ্ছে...';
+  @override
+  String get next => 'পরবর্তী';
+  @override
+  String get free => 'ফ্রি';
+  @override
+  String get cashbackEarned => 'ক্যাশব্যাক পাবেন';
+  @override
+  String get cashbackUsedLabel => 'ক্যাশব্যাক ব্যবহৃত';
+  @override
+  String get express => 'এক্সপ্রেস';
+  @override
+  String get standard => 'স্ট্যান্ডার্ড';
+  @override
+  String get freeDelivery => 'ফ্রি ডেলিভারি';
+  @override
+  String get freeDeliveryRequirement => '৳৫০০-এর বেশি অর্ডারে ফ্রি ডেলিভারি।';
+  @override
+  String get balance => 'ব্যালেন্স';
+  @override
+  String get codDescription => 'ওষুধ বুঝে পেয়ে দাম পরিশোধ করুন';
+  @override
+  String get digitalPaymentDescription => 'দ্রুত ও নিরাপদ ডিজিটাল পেমেন্ট';
+  @override
+  String get billDetails => 'বিল ডিটেইলস';
+  @override
+  String get deliverySpeed => 'ডেলিভারি স্পিড';
+  @override
+  String get securePayment => 'নিরাপদ পেমেন্ট';
+  @override
+  String get securePaymentDescription => 'আপনার লেনদেন হিলমিলের মাধ্যমে সুরক্ষিত ও এনক্রিপ্টেড।';
+  @override
+  String get riderDashboard => 'রাইডার ড্যাশবোর্ড';
+  @override
+  String get assigned => 'অ্যাসাইনড';
+  @override
+  String get pickedUp => 'সংগৃহীত';
+  @override
+  String get delivered => 'ডেলিভারড';
+  @override
+  String get customerInfo => 'গ্রাহকের তথ্য';
+  @override
+  String get callCustomer => 'গ্রাহককে কল দিন';
+  @override
+  String get deliveryInstructions => 'ডেলিভারি নির্দেশিকা';
+  @override
+  String get markPickedUp => 'সংগৃহীত চিহ্নিত করুন';
+  @override
+  String get markDelivered => 'ডেলিভারড চিহ্নিত করুন';
+  @override
+  String get earnings => 'উপার্জন';
+  @override
+  String get rating => 'রেটিং';
+  @override
+  String get openInMaps => 'ম্যাপে দেখুন';
+  @override
+  String get orderPickedUp => 'অর্ডারটি সংগৃহীত হিসেবে চিহ্নিত হয়েছে';
+  @override
+  String get orderDelivered => 'অর্ডারটি ডেলিভারড হিসেবে চিহ্নিত হয়েছে';
+  @override
+  String get totalItems => 'পণ্যসমূহ';
+  @override
+  String get labTechDashboard => 'ল্যাব টেক ড্যাশবোর্ড';
+  @override
+  String get pending => 'পেন্ডিং';
+  @override
+  String get all => 'সব';
+  @override
+  String get markCollected => 'নমুনা সংগ্রহ চিহ্নিত করুন';
+  @override
+  String get uploadReport => 'রিপোর্ট আপলোড';
+  @override
+  String get reportUploaded => 'রিপোর্ট সফলভাবে আপলোড হয়েছে';
+  @override
+  String get completeBooking => 'সম্পন্ন';
+  @override
+  String get sampleCollected => 'নমুনা সংগৃহীত';
+  @override
+  String get resultReady => 'রিপোর্ট প্রস্তুত';
+  @override
+  String get prescriptionApprovedBanner => 'প্রেসক্রিপশন অনুমোদিত!';
+  @override
+  String get medicinesMapped => 'টি ওষুধ ম্যাপ করা হয়েছে। এখনই যোগ করুন।';
+  @override
+  String get addAll => 'সব যোগ করুন';
+  @override
+  String get activeDelivery => 'চলমান ডেলিভারি';
+  @override
+  String get maps => 'ম্যাপ';
+  @override
+  String get tapToStartNavigation => 'ন্যাভিগেশন শুরু করতে ট্যাপ করুন';
+  @override
+  String get viewReport => 'রিপোর্ট দেখুন';
+  @override
+  String get noBookingsFound => 'কোনো বুকিং পাওয়া যায়নি';
+  @override
+  String get today => 'আজ';
+  @override
+  String get totalDelivered => 'মোট ডেলিভারি';
+  @override
+  String get todaysEarnings => 'আজকের আয়';
 }
+

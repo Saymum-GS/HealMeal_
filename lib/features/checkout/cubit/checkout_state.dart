@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../core/mock_data/mock_models.dart';
+import '../../../core/data/models.dart';
 
 class CheckoutState extends Equatable {
   const CheckoutState({
@@ -53,3 +53,4 @@ class CheckoutState extends Equatable {
     selectedPaymentMethod,
   ];
 }
+

@@ -32,3 +32,4 @@ class HealMealApp extends StatelessWidget {
     );
   }
 }
+

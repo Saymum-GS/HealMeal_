@@ -15,6 +15,7 @@ class HealMealTextField extends StatelessWidget {
     this.readOnly = false,
     this.onTap,
     this.onChanged,
+    this.obscureText = false,
   });
 
   final TextEditingController? controller;
@@ -27,6 +28,7 @@ class HealMealTextField extends StatelessWidget {
   final int? minLines;
   final int maxLines;
   final bool readOnly;
+  final bool obscureText;
   final VoidCallback? onTap;
   final ValueChanged<String>? onChanged;
 
@@ -39,6 +41,7 @@ class HealMealTextField extends StatelessWidget {
       maxLines: maxLines,
       minLines: minLines,
       readOnly: readOnly,
+      obscureText: obscureText,
       onTap: onTap,
       onChanged: onChanged,
       decoration: InputDecoration(
@@ -50,3 +53,4 @@ class HealMealTextField extends StatelessWidget {
     );
   }
 }
+

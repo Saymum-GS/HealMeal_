@@ -1,21 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../core/mock_data/mock_models.dart';
-import '../../../core/mock_data/mock_products.dart';
+import '../../../core/data/models.dart';
 import 'cart_state.dart';
 
 class CartCubit extends Cubit<CartState> {
   CartCubit()
     : super(
-        CartState(
-          items: [
-            CartEntry(product: mockMedicines[0], quantity: 2),
-            CartEntry(product: mockMedicines[1], quantity: 1),
-          ],
+        const CartState(
+          items: [],
         ),
       );
 
-  void addItem(MockProduct product) {
+  void addItem(Product product) {
     final items = List<CartEntry>.from(state.items);
     final index = items.indexWhere(
       (element) => element.product.id == product.id,
@@ -24,6 +20,21 @@ class CartCubit extends Cubit<CartState> {
       items[index] = items[index].copyWith(quantity: items[index].quantity + 1);
     } else {
       items.add(CartEntry(product: product, quantity: 1));
+    }
+    emit(state.copyWith(items: items));
+  }
+
+  void addMultipleItems(List<Product> products) {
+    final items = List<CartEntry>.from(state.items);
+    for (final product in products) {
+      final index = items.indexWhere(
+        (element) => element.product.id == product.id,
+      );
+      if (index >= 0) {
+        items[index] = items[index].copyWith(quantity: items[index].quantity + 1);
+      } else {
+        items.add(CartEntry(product: product, quantity: 1));
+      }
     }
     emit(state.copyWith(items: items));
   }
@@ -106,3 +117,4 @@ class CartCubit extends Cubit<CartState> {
   double get totalPrice =>
       subtotal - discountAmount - cashbackUsed + deliveryCharge;
 }
+

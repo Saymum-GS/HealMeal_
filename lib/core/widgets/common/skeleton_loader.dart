@@ -89,3 +89,4 @@ class SkeletonNotificationItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const SkeletonOrderCard();
 }
+

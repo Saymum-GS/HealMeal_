@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -26,25 +27,47 @@ class HealMealImage extends StatelessWidget {
   final BorderRadius? borderRadius;
   final IconData icon;
 
+  bool get _isBase64 {
+    final String value = imageUrl ?? '';
+    return value.startsWith('data:image') || 
+           (value.length > 100 && !value.startsWith('http') && !value.startsWith('assets/'));
+  }
+
   bool get _useFallback {
     final String value = imageUrl ?? '';
     return value.isEmpty ||
-        value.contains('via.placeholder.com') ||
-        value.contains('placeholder.com');
+        (!_isBase64 && (value.contains('via.placeholder.com') || value.contains('placeholder.com')));
   }
 
   @override
   Widget build(BuildContext context) {
     final BorderRadius radius = borderRadius ?? AppRadius.md;
-    final Widget child = _useFallback
-        ? _FallbackImage(label: label, icon: icon)
-        : CachedNetworkImage(
-            imageUrl: imageUrl!,
-            fit: fit,
-            placeholder: (_, __) => const _FallbackImage(isLoading: true),
-            errorWidget: (_, __, ___) =>
-                _FallbackImage(label: label, icon: icon),
-          );
+    
+    Widget child;
+    if (_useFallback) {
+      child = _FallbackImage(label: label, icon: icon);
+    } else if (_isBase64) {
+      try {
+        final String base64Data = imageUrl!.contains(',') 
+            ? imageUrl!.split(',').last 
+            : imageUrl!;
+        child = Image.memory(
+          base64Decode(base64Data),
+          fit: fit,
+          errorBuilder: (_, __, ___) => _FallbackImage(label: label, icon: icon),
+        );
+      } catch (e) {
+        child = _FallbackImage(label: label, icon: icon);
+      }
+    } else {
+      child = CachedNetworkImage(
+        imageUrl: imageUrl!,
+        fit: fit,
+        placeholder: (_, __) => const _FallbackImage(isLoading: true),
+        errorWidget: (_, __, ___) =>
+            _FallbackImage(label: label, icon: icon),
+      );
+    }
 
     return SizedBox(
       height: height,
@@ -208,3 +231,4 @@ class _FallbackImage extends StatelessWidget {
     );
   }
 }
+

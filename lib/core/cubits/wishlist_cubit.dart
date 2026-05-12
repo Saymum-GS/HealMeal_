@@ -21,3 +21,4 @@ class WishlistCubit extends Cubit<List<String>> {
     emit(list);
   }
 }
+

@@ -18,3 +18,4 @@ class LoadingDialog extends StatelessWidget {
     );
   }
 }
+

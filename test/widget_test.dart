@@ -13,6 +13,7 @@ import 'package:healmeal_app/features/home/cubit/home_cubit.dart';
 import 'package:healmeal_app/features/orders/cubit/orders_cubit.dart';
 import 'package:healmeal_app/features/products/cubit/product_cubit.dart';
 import 'package:healmeal_app/features/search/cubit/search_cubit.dart';
+import 'package:healmeal_app/core/repositories/offer_repository.dart';
 
 void main() {
   testWidgets('app boots into the auth flow', (WidgetTester tester) async {
@@ -37,7 +38,7 @@ void main() {
           BlocProvider<AuthCubit>(create: (_) => AuthCubit()),
           BlocProvider<CartCubit>(create: (_) => CartCubit()),
           BlocProvider<CheckoutCubit>(create: (_) => CheckoutCubit()),
-          BlocProvider<HomeCubit>(create: (_) => HomeCubit()..load()),
+          BlocProvider<HomeCubit>(create: (_) => HomeCubit(offerRepository: OfferRepository())..load()),
           BlocProvider<OrdersCubit>(create: (_) => OrdersCubit()..load()),
           BlocProvider<ProductCubit>(create: (_) => ProductCubit()..load()),
           BlocProvider<SearchCubit>(create: (_) => SearchCubit()),

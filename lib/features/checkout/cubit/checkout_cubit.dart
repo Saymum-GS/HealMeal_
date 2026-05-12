@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../core/mock_data/mock_models.dart';
+import '../../../core/data/models.dart';
 import 'checkout_state.dart';
 
 class CheckoutCubit extends Cubit<CheckoutState> {
@@ -17,3 +17,4 @@ class CheckoutCubit extends Cubit<CheckoutState> {
   void selectPayment(PaymentMethod method) =>
       emit(state.copyWith(selectedPaymentMethod: method));
 }
+

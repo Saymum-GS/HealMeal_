@@ -28,3 +28,4 @@ extension LocalizationExtension on BuildContext {
   AppStrings get strings =>
       isBangla ? const AppStringsBn() : const AppStringsEn();
 }
+

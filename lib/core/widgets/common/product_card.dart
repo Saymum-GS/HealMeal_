@@ -5,7 +5,7 @@ import '../../constants/app_colors.dart';
 import '../../constants/app_spacing.dart';
 import '../../constants/app_text_styles.dart';
 import '../../localization/app_localizations.dart';
-import '../../mock_data/mock_models.dart';
+import '../../data/models.dart';
 import '../../../features/cart/cubit/cart_cubit.dart';
 import '../../../features/cart/cubit/cart_state.dart';
 import '../../../core/cubits/wishlist_cubit.dart';
@@ -24,7 +24,7 @@ class ProductCard extends StatelessWidget {
     this.showWishlist = true,
   });
 
-  final MockProduct product;
+  final Product product;
   final VoidCallback onTap;
   final VoidCallback onAddToCart;
   final ProductCardStyle style;
@@ -231,7 +231,7 @@ class ProductCard extends StatelessWidget {
                 vertical: _isGrid ? 3 : 4,
               ),
               decoration: BoxDecoration(
-                color: AppColors.primaryLight,
+                color: Theme.of(context).primaryColorLight,
                 borderRadius: AppRadius.pill,
               ),
               child: Text(
@@ -401,3 +401,4 @@ class _StepButton extends StatelessWidget {
     );
   }
 }
+

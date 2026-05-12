@@ -14,3 +14,4 @@ class AppTheme {
     GlobalCupertinoLocalizations.delegate,
   ];
 }
+

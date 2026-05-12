@@ -23,3 +23,4 @@ class LocaleCubit extends Cubit<Locale> {
     emit(const Locale('bn'));
   }
 }
+

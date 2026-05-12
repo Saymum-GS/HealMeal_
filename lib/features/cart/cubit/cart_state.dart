@@ -1,14 +1,14 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../core/mock_data/mock_models.dart';
+import '../../../core/data/models.dart';
 
 class CartEntry extends Equatable {
   const CartEntry({required this.product, required this.quantity});
 
-  final MockProduct product;
+  final Product product;
   final int quantity;
 
-  CartEntry copyWith({MockProduct? product, int? quantity}) {
+  CartEntry copyWith({Product? product, int? quantity}) {
     return CartEntry(
       product: product ?? this.product,
       quantity: quantity ?? this.quantity,
@@ -68,3 +68,4 @@ class CartState extends Equatable {
     hasApprovedPrescription,
   ];
 }
+

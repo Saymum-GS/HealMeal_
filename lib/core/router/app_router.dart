@@ -1,65 +1,27 @@
 import 'package:go_router/go_router.dart';
+import 'package:flutter/material.dart';
 
-import '../utils/app_role.dart';
+import '../data/models.dart';
 import '../utils/app_session.dart';
-import '../../features/account/account_screen.dart';
-import '../../features/account/account_settings_screen.dart';
-import '../../features/account/add_edit_address_screen.dart';
-import '../../features/account/address_book_screen.dart';
-import '../../features/account/cashback_wallet_screen.dart';
-import '../../features/account/edit_profile_screen.dart';
-import '../../features/account/lab_bookings_screen.dart';
-import '../../features/account/lab_reports_screen.dart';
-import '../../features/account/lab_test_orders_screen.dart';
-import '../../features/account/manage_patients_screen.dart';
-import '../../features/account/notified_products_screen.dart';
-import '../../features/account/notification_screen.dart';
-import '../../features/account/product_reviews_screen.dart';
-import '../../features/account/refer_and_earn_screen.dart';
-import '../../features/account/rider_reviews_screen.dart';
-import '../../features/account/special_offers_screen.dart';
-import '../../features/account/suggest_product_screen.dart';
-import '../../features/account/transaction_history_screen.dart';
-import '../../features/account/wishlist_screen.dart';
-import '../../features/auth/login_screen.dart';
-import '../../features/auth/otp_screen.dart';
-import '../../features/auth/registration_screen.dart';
-import '../../features/cart/cart_screen.dart';
-import '../../features/checkout/checkout_screen.dart';
-import '../../features/checkout/order_confirmation_screen.dart';
-import '../../features/flash_sale/flash_sale_screen.dart';
-import '../../features/home/home_screen.dart';
-import '../../features/lab_tests/lab_test_booking_screen.dart';
-import '../../features/lab_tests/lab_test_detail_screen.dart';
-import '../../features/lab_tests/lab_test_home_screen.dart';
-import '../../features/onboarding/onboarding_screen.dart';
-import '../../features/offers/offers_screen.dart';
-import '../../features/orders/order_detail_screen.dart';
-import '../../features/orders/order_history_screen.dart';
-import '../../features/prescriptions/prescription_list_screen.dart';
-import '../../features/prescriptions/prescription_upload_screen.dart';
-import '../../features/products/brand_screen.dart';
-import '../../features/products/category_home_screen.dart';
-import '../../features/products/product_detail_screen.dart';
-import '../../features/products/product_list_screen.dart';
-import '../../features/roles/admin/admin_dashboard_screen.dart';
-import '../../features/roles/business/business_dashboard_screen.dart';
-import '../../features/roles/lab_tech/lab_tech_dashboard_screen.dart';
-import '../../features/roles/pharmacist/pharmacist_dashboard_screen.dart';
-import '../../features/roles/pharmacist/prescription_review_screen.dart';
-import '../../features/roles/rider/rider_dashboard_screen.dart';
-import '../../features/roles/rider/rider_order_detail_screen.dart';
-import '../../features/search/search_screen.dart';
-import '../../features/splash/splash_screen.dart';
-import '../../features/static/about_us_screen.dart';
-import '../../features/static/careers_screen.dart';
-import '../../features/static/contact_screen.dart';
-import '../../features/static/doctor_consultation_screen.dart';
-import '../../features/static/faq_screen.dart';
-import '../../features/static/health_tips_blog_screen.dart';
-import '../../features/static/privacy_policy_screen.dart';
-import '../../features/static/return_policy_screen.dart';
-import '../../features/static/terms_screen.dart';
+import '../../features/account/account_screens.dart';
+import '../../features/auth/auth_screens.dart';
+import '../../features/cart/cart_screens.dart';
+import '../../features/checkout/checkout_screens.dart';
+import '../../features/orders/order_tracking_screens.dart';
+import '../../features/flash_sale/flash_sale_screens.dart';
+import '../../features/home/home_screens.dart';
+import '../../features/lab_tests/lab_screens.dart';
+import '../../features/offers/offers_screens.dart';
+import '../../features/prescriptions/prescription_screens.dart';
+import '../../features/products/product_screens.dart';
+import '../../features/roles/role_screens.dart';
+import '../../features/roles/admin/admin_products_screen.dart';
+import '../../features/roles/admin/admin_offers_screen.dart';
+import '../../features/roles/admin/admin_suggestion_screen.dart';
+import '../../features/roles/admin/admin_lab_bookings_screen.dart';
+import '../../features/roles/admin/admin_categories_screen.dart';
+import '../../features/search/search_screens.dart';
+import '../../features/static/static_screens.dart';
 
 const Set<String> _authEntryRoutes = <String>{
   '/splash',
@@ -132,24 +94,24 @@ bool _isPatientArea(String location) {
   return false;
 }
 
-bool _canAccessRoleArea(AppRole role, String location) {
-  if (_isRolePrefix(location, '/pharmacist')) return role == AppRole.pharmacist;
-  if (_isRolePrefix(location, '/rider')) return role == AppRole.rider;
-  if (_isRolePrefix(location, '/admin')) return role == AppRole.admin;
-  if (_isRolePrefix(location, '/lab-tech')) return role == AppRole.labTech;
+bool _canAccessRoleArea(UserRole role, String location) {
+  if (_isRolePrefix(location, '/pharmacist')) return role == UserRole.pharmacist;
+  if (_isRolePrefix(location, '/rider')) return role == UserRole.rider;
+  if (_isRolePrefix(location, '/admin')) return role == UserRole.admin;
+  if (_isRolePrefix(location, '/lab-tech')) return role == UserRole.labTech;
   if (_isRolePrefix(location, '/account/business')) {
-    return role == AppRole.business;
+    return role == UserRole.business;
   }
   return true;
 }
 
-bool _canAccessPatientArea(AppRole role) {
-  return role == AppRole.user;
+bool _canAccessPatientArea(UserRole role) {
+  return role == UserRole.patient;
 }
 
 String? _redirectGuard(GoRouterState state) {
   final String location = state.uri.path;
-  final AppRole role = AppSession.currentUserRole;
+  final UserRole role = AppSession.currentUserRole;
 
   if (!_isPublicLocation(location) && !AppSession.isLoggedIn) {
     return '/login';
@@ -165,6 +127,7 @@ String? _redirectGuard(GoRouterState state) {
   }
 
   if (_isPatientArea(location) && !_canAccessPatientArea(role)) {
+    // Admins should be able to see patient areas for debugging, but let's stick to strict isolation for now
     return AppSession.homeRouteForRole(role);
   }
 
@@ -178,11 +141,6 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/splash', builder: (_, __) => const SplashScreen()),
     GoRoute(path: '/onboarding', builder: (_, __) => const OnboardingScreen()),
     GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
-    GoRoute(
-      path: '/otp',
-      builder: (_, GoRouterState state) =>
-          OtpScreen(phone: state.uri.queryParameters['phone'] ?? ''),
-    ),
     GoRoute(path: '/register', builder: (_, __) => const RegistrationScreen()),
     StatefulShellRoute.indexedStack(
       builder: (_, __, StatefulNavigationShell navigationShell) =>
@@ -277,11 +235,11 @@ final GoRouter appRouter = GoRouter(
       builder: (_, __) => const EditProfileScreen(),
     ),
     GoRoute(
-      path: '/account/addresses',
+      path: '/account/initialAddresses',
       builder: (_, __) => const AddressBookScreen(),
     ),
     GoRoute(
-      path: '/account/addresses/add',
+      path: '/account/initialAddresses/add',
       builder: (_, __) => const AddEditAddressScreen(),
     ),
     GoRoute(
@@ -290,7 +248,7 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/account/notifications',
-      builder: (_, __) => const NotificationScreen(),
+      builder: (_, __) => const NotificationListScreen(),
     ),
     GoRoute(
       path: '/account/product-reviews',
@@ -338,7 +296,7 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/account/offers',
-      builder: (_, __) => const SpecialOffersScreen(),
+      builder: (_, __) => const OffersScreen(),
     ),
     GoRoute(
       path: '/account/referral',
@@ -372,6 +330,11 @@ final GoRouter appRouter = GoRouter(
       builder: (_, GoRouterState state) =>
           PrescriptionReviewScreen(id: state.pathParameters['id']!),
     ),
+    GoRoute(
+      path: '/pharmacist/prescription/:id',
+      builder: (_, GoRouterState state) =>
+          PrescriptionReviewScreen(id: state.pathParameters['id']!),
+    ),
     GoRoute(path: '/rider', builder: (_, __) => const RiderDashboardScreen()),
     GoRoute(
       path: '/rider/order/:id',
@@ -379,6 +342,43 @@ final GoRouter appRouter = GoRouter(
           RiderOrderDetailScreen(id: state.pathParameters['id']!),
     ),
     GoRoute(path: '/admin', builder: (_, __) => const AdminDashboardScreen()),
+    GoRoute(
+      path: '/admin/users',
+      builder: (_, __) => const UserManagementScreen(),
+    ),
+    GoRoute(
+      path: '/admin/products/add',
+      builder: (_, __) => const ProductFormScreen(),
+    ),
+    GoRoute(
+      path: '/admin/products',
+      builder: (_, __) => const AdminProductListScreen(),
+    ),
+    GoRoute(
+      path: '/admin/offers',
+      builder: (_, __) => const AdminOfferManagementScreen(),
+    ),
+    GoRoute(
+      path: '/admin/suggestions',
+      builder: (_, __) => const AdminSuggestionScreen(),
+    ),
+    GoRoute(
+      path: '/admin/lab-bookings',
+      builder: (_, __) => const AdminLabBookingScreen(),
+    ),
+    GoRoute(
+      path: '/admin/categories',
+      builder: (_, __) => const AdminCategoryScreen(),
+    ),
+    GoRoute(
+      path: '/admin/products/edit/:id',
+      builder: (_, GoRouterState state) =>
+          ProductFormScreen(productId: state.pathParameters['id']),
+    ),
+    GoRoute(
+      path: '/admin/lab-tech',
+      builder: (_, __) => const LabTechDashboardScreen(),
+    ),
     GoRoute(
       path: '/lab-tech',
       builder: (_, __) => const LabTechDashboardScreen(),

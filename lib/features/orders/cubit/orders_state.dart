@@ -1,30 +1,31 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../core/mock_data/mock_models.dart';
+import '../../../core/data/models.dart';
 
 class OrdersState extends Equatable {
   const OrdersState({
-    this.orders = const <MockOrder>[],
-    this.lastPlacedOrderId,
+    this.orders = const <AppOrder>[],
+    this.lastPlacedAppOrderId,
     this.loaded = false,
   });
 
-  final List<MockOrder> orders;
-  final String? lastPlacedOrderId;
+  final List<AppOrder> orders;
+  final String? lastPlacedAppOrderId;
   final bool loaded;
 
   OrdersState copyWith({
-    List<MockOrder>? orders,
-    String? lastPlacedOrderId,
+    List<AppOrder>? orders,
+    String? lastPlacedAppOrderId,
     bool? loaded,
   }) {
     return OrdersState(
       orders: orders ?? this.orders,
-      lastPlacedOrderId: lastPlacedOrderId ?? this.lastPlacedOrderId,
+      lastPlacedAppOrderId: lastPlacedAppOrderId ?? this.lastPlacedAppOrderId,
       loaded: loaded ?? this.loaded,
     );
   }
 
   @override
-  List<Object?> get props => <Object?>[orders, lastPlacedOrderId, loaded];
+  List<Object?> get props => <Object?>[orders, lastPlacedAppOrderId, loaded];
 }
+

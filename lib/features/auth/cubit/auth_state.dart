@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
-
-import '../../../core/utils/app_role.dart';
+import '../../../core/data/models.dart';
 
 abstract class AuthState extends Equatable {
   const AuthState();
@@ -13,25 +12,12 @@ class AuthInitial extends AuthState {
   const AuthInitial();
 }
 
-class OtpSending extends AuthState {
-  const OtpSending();
+class AuthLoading extends AuthState {
+  const AuthLoading();
 }
 
-class OtpSent extends AuthState {
-  const OtpSent({required this.phone});
-
-  final String phone;
-
-  @override
-  List<Object?> get props => [phone];
-}
-
-class OtpVerifying extends AuthState {
-  const OtpVerifying();
-}
-
-class OtpError extends AuthState {
-  const OtpError({required this.message});
+class AuthError extends AuthState {
+  const AuthError({required this.message});
 
   final String message;
 
@@ -40,12 +26,20 @@ class OtpError extends AuthState {
 }
 
 class AuthAuthenticated extends AuthState {
-  const AuthAuthenticated({required this.role});
+  const AuthAuthenticated({
+    required this.role,
+    this.name,
+    this.email,
+    this.photoUrl,
+  });
 
-  final AppRole role;
+  final UserRole role;
+  final String? name;
+  final String? email;
+  final String? photoUrl;
 
   @override
-  List<Object?> get props => [role];
+  List<Object?> get props => [role, name, email, photoUrl];
 }
 
 class AuthUnauthenticated extends AuthState {

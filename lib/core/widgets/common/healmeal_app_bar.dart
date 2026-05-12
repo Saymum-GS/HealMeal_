@@ -88,3 +88,4 @@ class HealMealAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
+

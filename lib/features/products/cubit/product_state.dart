@@ -1,6 +1,16 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../core/mock_data/mock_models.dart';
+import '../../../core/data/models.dart';
+
+enum ProductSort {
+  relevance,
+  priceLowToHigh,
+  priceHighToLow,
+  rating,
+  newest,
+  alphabetical,
+  discount,
+}
 
 class ProductState extends Equatable {
   const ProductState({
@@ -8,24 +18,28 @@ class ProductState extends Equatable {
     this.allProducts = const [],
     this.filteredProducts = const [],
     this.activeCategory,
+    this.sortBy = ProductSort.relevance,
   });
 
   final bool loading;
-  final List<MockProduct> allProducts;
-  final List<MockProduct> filteredProducts;
+  final List<Product> allProducts;
+  final List<Product> filteredProducts;
   final String? activeCategory;
+  final ProductSort sortBy;
 
   ProductState copyWith({
     bool? loading,
-    List<MockProduct>? allProducts,
-    List<MockProduct>? filteredProducts,
+    List<Product>? allProducts,
+    List<Product>? filteredProducts,
     String? activeCategory,
+    ProductSort? sortBy,
   }) {
     return ProductState(
       loading: loading ?? this.loading,
       allProducts: allProducts ?? this.allProducts,
       filteredProducts: filteredProducts ?? this.filteredProducts,
       activeCategory: activeCategory ?? this.activeCategory,
+      sortBy: sortBy ?? this.sortBy,
     );
   }
 
@@ -35,5 +49,7 @@ class ProductState extends Equatable {
     allProducts,
     filteredProducts,
     activeCategory,
+    sortBy,
   ];
 }
+

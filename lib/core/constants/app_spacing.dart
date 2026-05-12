@@ -17,3 +17,4 @@ class AppRadius {
   static BorderRadius get xl => BorderRadius.circular(24);
   static BorderRadius get pill => BorderRadius.circular(100);
 }
+

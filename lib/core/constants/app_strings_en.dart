@@ -122,6 +122,87 @@ abstract class AppStrings {
   String get spouse;
   String get parent;
   String get child;
+  String get login;
+  String get phoneNumber;
+  String get enterNumber;
+  String get sortBy;
+  String get relevance;
+  String get priceLowToHigh;
+  String get priceHighToLow;
+  String get topRated;
+  String get newestArrivals;
+  String get nameAZ;
+  String get biggestDiscount;
+  String get seasonalCampaign;
+  String get upTo60Off;
+  String get number1Platform;
+  String get trustedMedicineAndCare;
+  String get assignRider;
+  String get approveRx;
+  String get manageCategories;
+  String get manageUsers;
+  String get addProduct;
+  String get manageOffers;
+  String get selectDeliveryAddress;
+  String get selectPaymentMethod;
+  String get orderReview;
+  String get address;
+  String get slot;
+  String get coupon;
+  String get payment;
+  String get review;
+  String get placingOrder;
+  String get processingPayment;
+  String get next;
+  String get free;
+  String get cashbackEarned;
+  String get cashbackUsedLabel;
+  String get express;
+  String get standard;
+  String get freeDelivery;
+  String get freeDeliveryRequirement;
+  String get balance;
+  String get codDescription;
+  String get digitalPaymentDescription;
+  String get billDetails;
+  String get deliverySpeed;
+  String get securePayment;
+  String get securePaymentDescription;
+  String get riderDashboard;
+  String get assigned;
+  String get pickedUp;
+  String get delivered;
+  String get customerInfo;
+  String get callCustomer;
+  String get deliveryInstructions;
+  String get markPickedUp;
+  String get markDelivered;
+  String get earnings;
+  String get rating;
+  String get openInMaps;
+  String get orderPickedUp;
+  String get orderDelivered;
+  String get totalItems;
+  String get labTechDashboard;
+  String get pending;
+  String get all;
+  String get markCollected;
+  String get uploadReport;
+  String get reportUploaded;
+  String get completeBooking;
+  String get sampleCollected;
+  String get resultReady;
+  String get prescriptionApprovedBanner;
+  String get medicinesMapped;
+  String get addAll;
+  String get activeDelivery;
+  String get maps;
+  String get tapToStartNavigation;
+  String get viewReport;
+  String get noBookingsFound;
+  String get today;
+  String get totalDelivered;
+  String get todaysEarnings;
 }
 
 class AppStringsEn extends AppStrings {
@@ -369,4 +450,167 @@ class AppStringsEn extends AppStrings {
   String get parent => 'Parent';
   @override
   String get child => 'Child';
+  @override
+  String get login => 'Log In';
+  @override
+  String get phoneNumber => 'Phone Number';
+  @override
+  String get enterNumber => 'Enter your number';
+  @override
+  String get sortBy => 'Sort By';
+  @override
+  String get relevance => 'Relevance';
+  @override
+  String get priceLowToHigh => 'Price: Low to High';
+  @override
+  String get priceHighToLow => 'Price: High to Low';
+  @override
+  String get topRated => 'Top Rated';
+  @override
+  String get newestArrivals => 'Newest Arrivals';
+  @override
+  String get nameAZ => 'Name: A-Z';
+  @override
+  String get biggestDiscount => 'Biggest Discount';
+  @override
+  String get seasonalCampaign => 'Seasonal Campaign';
+  @override
+  String get upTo60Off => 'Up to 60% OFF';
+  @override
+  String get number1Platform => '#1 Platform';
+  @override
+  String get trustedMedicineAndCare => 'Trusted medicine & care';
+  @override
+  String get assignRider => 'Assign Rider';
+  @override
+  String get approveRx => 'Approve Rx';
+  @override
+  String get manageCategories => 'Manage Categories';
+  @override
+  String get manageUsers => 'Manage Users';
+  @override
+  String get addProduct => 'Add Product';
+  @override
+  String get manageOffers => 'Manage Offers';
+  @override
+  String get selectDeliveryAddress => 'Select Delivery Address';
+  @override
+  String get selectPaymentMethod => 'Select Payment Method';
+  @override
+  String get orderReview => 'Order Review';
+  @override
+  String get address => 'Address';
+  @override
+  String get slot => 'Slot';
+  @override
+  String get coupon => 'Coupon';
+  @override
+  String get payment => 'Payment';
+  @override
+  String get review => 'Review';
+  @override
+  String get placingOrder => 'Placing Order...';
+  @override
+  String get processingPayment => 'Processing Payment...';
+  @override
+  String get next => 'Next';
+  @override
+  String get free => 'FREE';
+  @override
+  String get cashbackEarned => 'Cashback Earn';
+  @override
+  String get cashbackUsedLabel => 'Cashback Used';
+  @override
+  String get express => 'Express';
+  @override
+  String get standard => 'Standard';
+  @override
+  String get freeDelivery => 'Free delivery';
+  @override
+  String get freeDeliveryRequirement => 'Orders above ৳500 get free delivery.';
+  @override
+  String get balance => 'Balance';
+  @override
+  String get codDescription => 'Pay when you receive your medicine';
+  @override
+  String get digitalPaymentDescription => 'Fast and secure digital payment';
+  @override
+  String get billDetails => 'Bill Details';
+  @override
+  String get deliverySpeed => 'Delivery Speed';
+  @override
+  String get securePayment => 'Secure Payment';
+  @override
+  String get securePaymentDescription => 'Your transaction is encrypted and secure with HealMeal.';
+  @override
+  String get riderDashboard => 'Rider Dashboard';
+  @override
+  String get assigned => 'Assigned';
+  @override
+  String get pickedUp => 'Picked Up';
+  @override
+  String get delivered => 'Delivered';
+  @override
+  String get customerInfo => 'Customer Information';
+  @override
+  String get callCustomer => 'Call Customer';
+  @override
+  String get deliveryInstructions => 'Delivery Instructions';
+  @override
+  String get markPickedUp => 'Mark Picked Up';
+  @override
+  String get markDelivered => 'Mark Delivered';
+  @override
+  String get earnings => 'Earnings';
+  @override
+  String get rating => 'Rating';
+  @override
+  String get openInMaps => 'Open in Maps';
+  @override
+  String get orderPickedUp => 'Order marked as picked up';
+  @override
+  String get orderDelivered => 'Order marked as delivered';
+  @override
+  String get totalItems => 'Items';
+  @override
+  String get labTechDashboard => 'Lab Tech Dashboard';
+  @override
+  String get pending => 'Pending';
+  @override
+  String get all => 'All';
+  @override
+  String get markCollected => 'Mark Collected';
+  @override
+  String get uploadReport => 'Upload Report';
+  @override
+  String get reportUploaded => 'Report uploaded successfully';
+  @override
+  String get completeBooking => 'Complete';
+  @override
+  String get sampleCollected => 'Sample Collected';
+  @override
+  String get resultReady => 'Result Ready';
+  @override
+  String get prescriptionApprovedBanner => 'Prescription Approved!';
+  @override
+  String get medicinesMapped => 'medicines mapped. Add to cart now.';
+  @override
+  String get addAll => 'Add All';
+  @override
+  String get activeDelivery => 'Active Delivery';
+  @override
+  String get maps => 'Maps';
+  @override
+  String get tapToStartNavigation => 'Tap to Start Navigation';
+  @override
+  String get viewReport => 'View Report';
+  @override
+  String get noBookingsFound => 'No bookings found';
+  @override
+  String get today => 'Today';
+  @override
+  String get totalDelivered => 'Total Delivered';
+  @override
+  String get todaysEarnings => "Today's Earnings";
 }
+

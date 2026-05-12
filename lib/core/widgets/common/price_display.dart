@@ -44,3 +44,4 @@ class PriceDisplay extends StatelessWidget {
     );
   }
 }
+
