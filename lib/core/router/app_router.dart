@@ -176,85 +176,101 @@ GoRouter createRouter(AuthCubit authCubit) {
       GoRoute(path: '/onboarding', builder: (_, __) => const OnboardingScreen()),
       GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
       GoRoute(path: '/register', builder: (_, __) => const RegistrationScreen()),
-      StatefulShellRoute.indexedStack(
-        builder: (_, __, StatefulNavigationShell navigationShell) =>
-            MainShell(navigationShell: navigationShell),
-        branches: <StatefulShellBranch>[
-          StatefulShellBranch(
-            routes: <RouteBase>[
-              GoRoute(
-                path: '/home',
-                builder: (context, state) => BlocProvider(
-                  create: (context) => HomeCubit(
-                    offerRepository: getIt<OfferRepository>(),
-                  )..load(),
-                  child: const HomeScreen(),
-                ),
+      ShellRoute(
+        builder: (context, state, child) => MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => ProductCubit()..load(),
+            ),
+            BlocProvider(
+              create: (context) => HomeCubit(
+                offerRepository: getIt<OfferRepository>(),
+              )..load(),
+            ),
+          ],
+          child: child,
+        ),
+        routes: [
+          StatefulShellRoute.indexedStack(
+            builder: (context, state, navigationShell) =>
+                MainShell(navigationShell: navigationShell),
+            branches: <StatefulShellBranch>[
+              StatefulShellBranch(
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/home',
+                    builder: (context, state) => const HomeScreen(),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/categories',
+                    builder: (_, __) => const CategoryListScreen(),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/lab-test',
+                    builder: (context, state) => BlocProvider(
+                      create: (context) => LabTestCubit(
+                        repository: getIt<LabTestRepository>(),
+                      )..load(),
+                      child: const LabTestHomeScreen(),
+                    ),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/account',
+                    builder: (_, __) => const AccountScreen(),
+                  ),
+                ],
               ),
             ],
           ),
-          StatefulShellBranch(
-            routes: <RouteBase>[
-              GoRoute(
-                path: '/categories',
-                builder: (_, __) => const CategoryListScreen(),
-              ),
-            ],
+          GoRoute(
+            path: '/products',
+            builder: (context, GoRouterState state) =>
+                ProductListScreen(queryParams: state.uri.queryParameters),
           ),
-          StatefulShellBranch(
-            routes: <RouteBase>[
-              GoRoute(
-                path: '/lab-test',
-                builder: (context, state) => BlocProvider(
-                  create: (context) => LabTestCubit(
-                    repository: getIt<LabTestRepository>(),
-                  )..load(),
-                  child: const LabTestHomeScreen(),
-                ),
-              ),
-            ],
+          GoRoute(
+            path: '/product/:id',
+            builder: (_, GoRouterState state) =>
+                ProductDetailScreen(id: state.pathParameters['id']!),
           ),
-          StatefulShellBranch(
-            routes: <RouteBase>[
-              GoRoute(
-                path: '/account',
-                builder: (_, __) => const AccountScreen(),
-              ),
-            ],
+          GoRoute(
+            path: '/brand/:id',
+            builder: (_, GoRouterState state) =>
+                BrandScreen(id: state.pathParameters['id']!),
+          ),
+          GoRoute(
+            path: '/category/:slug',
+            builder: (_, GoRouterState state) =>
+                CategoryHomeScreen(slug: state.pathParameters['slug']!),
+          ),
+          GoRoute(
+            path: '/flash-sale',
+            builder: (_, __) => const FlashSaleScreen(),
+          ),
+          GoRoute(
+            path: '/offers',
+            builder: (_, __) => const OffersScreen(),
           ),
         ],
       ),
       GoRoute(path: '/cart', builder: (_, __) => const CartScreen()),
-      GoRoute(path: '/flash-sale', builder: (_, __) => const FlashSaleScreen()),
-      GoRoute(path: '/offers', builder: (_, __) => const OffersScreen()),
       GoRoute(
         path: '/search',
         builder: (context, __) => BlocProvider(
           create: (context) => SearchCubit(),
           child: const SearchScreen(),
         ),
-      ),
-      GoRoute(
-        path: '/category/:slug',
-        builder: (_, GoRouterState state) =>
-            CategoryHomeScreen(slug: state.pathParameters['slug']!),
-      ),
-      GoRoute(
-        path: '/products',
-        builder: (context, GoRouterState state) => BlocProvider(
-          create: (context) => ProductCubit()..load(),
-          child: ProductListScreen(queryParams: state.uri.queryParameters),
-        ),
-      ),
-      GoRoute(
-        path: '/product/:id',
-        builder: (_, GoRouterState state) =>
-            ProductDetailScreen(id: state.pathParameters['id']!),
-      ),
-      GoRoute(
-        path: '/brand/:id',
-        builder: (_, GoRouterState state) =>
-            BrandScreen(id: state.pathParameters['id']!),
       ),
       GoRoute(
         path: '/checkout',
