@@ -211,14 +211,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                GestureDetector(
-                  onLongPress: () => _showRoleSwitcher(context),
-                  child: Container(
-                    height: 40,
-                    width: double.infinity,
-                    color: Colors.transparent,
-                  ),
-                ),
               ],
             ),
           ),
@@ -227,48 +219,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _showRoleSwitcher(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Developer Role Switcher'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ...UserRole.values.map((role) => ListTile(
-              title: Text(role.name.toUpperCase()),
-              onTap: () async {
-                await AppSession.persistLogin(
-                  role: role,
-                  phone: '01700000000',
-                  userId: 'dev_user_${role.id}',
-                );
-                if (context.mounted) {
-                  Navigator.pop(context);
-                  context.go(role.homeRoute);
-                }
-              },
-            )),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.storage_rounded, color: AppColors.primary),
-              title: const Text('Seed Database (90+ Products)'),
-              onTap: () async {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Seeding database... please wait')),
-                );
-                await DatabaseInitializer.seedDatabase();
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Database seeded successfully!')),
-                  );
-                }
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

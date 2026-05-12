@@ -63,19 +63,6 @@ class AuthCubit extends Cubit<AuthState> {
               orElse: () => UserRole.patient,
             );
           }
-        } else {
-          // Hardcoded fallback for master admin if not in DB yet
-          if (email.trim() == 'admin@healmeal.com.bd') {
-            role = UserRole.admin;
-            name = 'Master Admin';
-            userEmail = email.trim();
-            await _firestore.collection('users').doc(user.uid).set({
-              'email': email.trim(),
-              'role': 'admin',
-              'name': 'Master Admin',
-              'createdAt': FieldValue.serverTimestamp(),
-            });
-          }
         }
 
         await AppSession.persistLogin(

@@ -1,27 +1,59 @@
-import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
-
+import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../data/models.dart';
 import '../utils/app_session.dart';
+import '../di/service_locator.dart';
 import '../../features/account/account_screens.dart';
 import '../../features/auth/auth_screens.dart';
+import '../../features/auth/cubit/auth_cubit.dart';
+import '../../features/auth/cubit/auth_state.dart';
 import '../../features/cart/cart_screens.dart';
 import '../../features/checkout/checkout_screens.dart';
+import '../../features/checkout/cubit/checkout_cubit.dart';
 import '../../features/orders/order_tracking_screens.dart';
+import '../../features/orders/cubit/orders_cubit.dart';
 import '../../features/flash_sale/flash_sale_screens.dart';
 import '../../features/home/home_screens.dart';
+import '../../features/home/cubit/home_cubit.dart';
 import '../../features/lab_tests/lab_screens.dart';
+import '../../features/lab_tests/cubit/lab_test_cubit.dart';
 import '../../features/offers/offers_screens.dart';
 import '../../features/prescriptions/prescription_screens.dart';
+import '../../features/prescriptions/cubit/prescription_cubit.dart';
 import '../../features/products/product_screens.dart';
+import '../../features/products/cubit/product_cubit.dart';
 import '../../features/roles/role_screens.dart';
 import '../../features/roles/admin/admin_products_screen.dart';
 import '../../features/roles/admin/admin_offers_screen.dart';
 import '../../features/roles/admin/admin_suggestion_screen.dart';
 import '../../features/roles/admin/admin_lab_bookings_screen.dart';
 import '../../features/roles/admin/admin_categories_screen.dart';
+import '../../features/roles/admin/cubit/admin_cubit.dart';
+import '../../features/roles/lab_tech/cubit/lab_tech_cubit.dart';
+import '../../features/roles/pharmacist/cubit/pharmacist_cubit.dart';
+import '../../features/roles/rider/cubit/rider_cubit.dart';
 import '../../features/search/search_screens.dart';
+import '../../features/search/cubit/search_cubit.dart';
 import '../../features/static/static_screens.dart';
+import '../repositories/product_repository.dart';
+import '../repositories/order_repository.dart';
+import '../repositories/lab_test_repository.dart';
+import '../repositories/prescription_repository.dart';
+import '../repositories/user_repository.dart';
+import '../repositories/offer_repository.dart';
+import '../repositories/suggestion_repository.dart';
+import '../repositories/lab_repository.dart';
+
+class RouterNotifier extends ChangeNotifier {
+  RouterNotifier(this._authCubit) {
+    _authCubit.stream.listen((state) {
+      notifyListeners();
+    });
+  }
+
+  final AuthCubit _authCubit;
+}
 
 const Set<String> _authEntryRoutes = <String>{
   '/splash',
@@ -134,254 +166,412 @@ String? _redirectGuard(GoRouterState state) {
   return null;
 }
 
-final GoRouter appRouter = GoRouter(
-  initialLocation: '/splash',
-  redirect: (_, GoRouterState state) => _redirectGuard(state),
-  routes: <RouteBase>[
-    GoRoute(path: '/splash', builder: (_, __) => const SplashScreen()),
-    GoRoute(path: '/onboarding', builder: (_, __) => const OnboardingScreen()),
-    GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
-    GoRoute(path: '/register', builder: (_, __) => const RegistrationScreen()),
-    StatefulShellRoute.indexedStack(
-      builder: (_, __, StatefulNavigationShell navigationShell) =>
-          MainShell(navigationShell: navigationShell),
-      branches: <StatefulShellBranch>[
-        StatefulShellBranch(
-          routes: <RouteBase>[
-            GoRoute(path: '/home', builder: (_, __) => const HomeScreen()),
-          ],
+GoRouter createRouter(AuthCubit authCubit) {
+  return GoRouter(
+    initialLocation: '/splash',
+    refreshListenable: RouterNotifier(authCubit),
+    redirect: (_, GoRouterState state) => _redirectGuard(state),
+    routes: <RouteBase>[
+      GoRoute(path: '/splash', builder: (_, __) => const SplashScreen()),
+      GoRoute(path: '/onboarding', builder: (_, __) => const OnboardingScreen()),
+      GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
+      GoRoute(path: '/register', builder: (_, __) => const RegistrationScreen()),
+      StatefulShellRoute.indexedStack(
+        builder: (_, __, StatefulNavigationShell navigationShell) =>
+            MainShell(navigationShell: navigationShell),
+        branches: <StatefulShellBranch>[
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/home',
+                builder: (context, state) => BlocProvider(
+                  create: (context) => HomeCubit(
+                    offerRepository: getIt<OfferRepository>(),
+                  )..load(),
+                  child: const HomeScreen(),
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/categories',
+                builder: (_, __) => const CategoryListScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/lab-test',
+                builder: (context, state) => BlocProvider(
+                  create: (context) => LabTestCubit(
+                    repository: getIt<LabTestRepository>(),
+                  )..load(),
+                  child: const LabTestHomeScreen(),
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/account',
+                builder: (_, __) => const AccountScreen(),
+              ),
+            ],
+          ),
+        ],
+      ),
+      GoRoute(path: '/cart', builder: (_, __) => const CartScreen()),
+      GoRoute(path: '/flash-sale', builder: (_, __) => const FlashSaleScreen()),
+      GoRoute(path: '/offers', builder: (_, __) => const OffersScreen()),
+      GoRoute(
+        path: '/search',
+        builder: (context, __) => BlocProvider(
+          create: (context) => SearchCubit(),
+          child: const SearchScreen(),
         ),
-        StatefulShellBranch(
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/categories',
-              builder: (_, __) => const CategoryListScreen(),
-            ),
-          ],
+      ),
+      GoRoute(
+        path: '/category/:slug',
+        builder: (_, GoRouterState state) =>
+            CategoryHomeScreen(slug: state.pathParameters['slug']!),
+      ),
+      GoRoute(
+        path: '/products',
+        builder: (context, GoRouterState state) => BlocProvider(
+          create: (context) => ProductCubit()..load(),
+          child: ProductListScreen(queryParams: state.uri.queryParameters),
         ),
-        StatefulShellBranch(
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/lab-test',
-              builder: (_, __) => const LabTestHomeScreen(),
-            ),
-          ],
+      ),
+      GoRoute(
+        path: '/product/:id',
+        builder: (_, GoRouterState state) =>
+            ProductDetailScreen(id: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/brand/:id',
+        builder: (_, GoRouterState state) =>
+            BrandScreen(id: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/checkout',
+        builder: (context, __) => BlocProvider(
+          create: (context) => CheckoutCubit(),
+          child: const CheckoutScreen(),
         ),
-        StatefulShellBranch(
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/account',
-              builder: (_, __) => const AccountScreen(),
-            ),
-          ],
+      ),
+      GoRoute(
+        path: '/order-confirmed',
+        builder: (_, __) => const OrderConfirmationScreen(),
+      ),
+      GoRoute(
+        path: '/orders',
+        builder: (context, __) => BlocProvider(
+          create: (context) => OrdersCubit()..load(),
+          child: const OrderHistoryScreen(),
         ),
-      ],
-    ),
-    GoRoute(path: '/cart', builder: (_, __) => const CartScreen()),
-    GoRoute(path: '/flash-sale', builder: (_, __) => const FlashSaleScreen()),
-    GoRoute(path: '/offers', builder: (_, __) => const OffersScreen()),
-    GoRoute(path: '/search', builder: (_, __) => const SearchScreen()),
-    GoRoute(
-      path: '/category/:slug',
-      builder: (_, GoRouterState state) =>
-          CategoryHomeScreen(slug: state.pathParameters['slug']!),
-    ),
-    GoRoute(
-      path: '/products',
-      builder: (_, GoRouterState state) =>
-          ProductListScreen(queryParams: state.uri.queryParameters),
-    ),
-    GoRoute(
-      path: '/product/:id',
-      builder: (_, GoRouterState state) =>
-          ProductDetailScreen(id: state.pathParameters['id']!),
-    ),
-    GoRoute(
-      path: '/brand/:id',
-      builder: (_, GoRouterState state) =>
-          BrandScreen(id: state.pathParameters['id']!),
-    ),
-    GoRoute(path: '/checkout', builder: (_, __) => const CheckoutScreen()),
-    GoRoute(
-      path: '/order-confirmed',
-      builder: (_, __) => const OrderConfirmationScreen(),
-    ),
-    GoRoute(path: '/orders', builder: (_, __) => const OrderHistoryScreen()),
-    GoRoute(
-      path: '/orders/:id',
-      builder: (_, GoRouterState state) =>
-          OrderDetailScreen(id: state.pathParameters['id']!),
-    ),
-    GoRoute(
-      path: '/prescriptions',
-      builder: (_, __) => const PrescriptionListScreen(),
-    ),
-    GoRoute(
-      path: '/prescriptions/upload',
-      builder: (_, __) => const PrescriptionUploadScreen(),
-    ),
-    GoRoute(
-      path: '/lab-test/:id',
-      builder: (_, GoRouterState state) =>
-          LabTestDetailScreen(id: state.pathParameters['id']!),
-    ),
-    GoRoute(
-      path: '/lab-test/book/:id',
-      builder: (_, GoRouterState state) =>
-          LabTestBookingScreen(id: state.pathParameters['id']!),
-    ),
-    GoRoute(
-      path: '/account/edit',
-      builder: (_, __) => const EditProfileScreen(),
-    ),
-    GoRoute(
-      path: '/account/initialAddresses',
-      builder: (_, __) => const AddressBookScreen(),
-    ),
-    GoRoute(
-      path: '/account/initialAddresses/add',
-      builder: (_, __) => const AddEditAddressScreen(),
-    ),
-    GoRoute(
-      path: '/account/cashback',
-      builder: (_, __) => const CashbackWalletScreen(),
-    ),
-    GoRoute(
-      path: '/account/notifications',
-      builder: (_, __) => const NotificationListScreen(),
-    ),
-    GoRoute(
-      path: '/account/product-reviews',
-      builder: (_, __) => const ProductReviewsScreen(),
-    ),
-    GoRoute(
-      path: '/account/rider-reviews',
-      builder: (_, __) => const RiderReviewsScreen(),
-    ),
-    GoRoute(
-      path: '/account/settings',
-      builder: (_, __) => const AccountSettingsScreen(),
-    ),
-    GoRoute(
-      path: '/account/lab-orders',
-      builder: (_, __) => const LabTestOrdersScreen(),
-    ),
-    GoRoute(
-      path: '/account/lab-bookings',
-      builder: (_, __) => const LabBookingsScreen(),
-    ),
-    GoRoute(
-      path: '/account/lab-reports',
-      builder: (_, __) => const LabReportsScreen(),
-    ),
-    GoRoute(
-      path: '/account/manage-patients',
-      builder: (_, __) => const ManagePatientsScreen(),
-    ),
-    GoRoute(
-      path: '/account/wishlist',
-      builder: (_, __) => const WishlistScreen(),
-    ),
-    GoRoute(
-      path: '/account/notified-products',
-      builder: (_, __) => const NotifiedProductsScreen(),
-    ),
-    GoRoute(
-      path: '/account/suggest-product',
-      builder: (_, __) => const SuggestProductScreen(),
-    ),
-    GoRoute(
-      path: '/account/transactions',
-      builder: (_, __) => const TransactionHistoryScreen(),
-    ),
-    GoRoute(
-      path: '/account/offers',
-      builder: (_, __) => const OffersScreen(),
-    ),
-    GoRoute(
-      path: '/account/referral',
-      builder: (_, __) => const ReferAndEarnScreen(),
-    ),
-    GoRoute(
-      path: '/account/business',
-      builder: (_, __) => const BusinessDashboardScreen(),
-    ),
-    GoRoute(path: '/about', builder: (_, __) => const AboutUsScreen()),
-    GoRoute(path: '/contact', builder: (_, __) => const ContactScreen()),
-    GoRoute(path: '/faq', builder: (_, __) => const FaqScreen()),
-    GoRoute(path: '/privacy', builder: (_, __) => const PrivacyPolicyScreen()),
-    GoRoute(path: '/terms', builder: (_, __) => const TermsScreen()),
-    GoRoute(
-      path: '/return-policy',
-      builder: (_, __) => const ReturnPolicyScreen(),
-    ),
-    GoRoute(path: '/blog', builder: (_, __) => const HealthTipsBlogScreen()),
-    GoRoute(
-      path: '/doctor-consultation',
-      builder: (_, __) => const DoctorConsultationScreen(),
-    ),
-    GoRoute(path: '/jobs', builder: (_, __) => const CareersScreen()),
-    GoRoute(
-      path: '/pharmacist',
-      builder: (_, __) => const PharmacistDashboardScreen(),
-    ),
-    GoRoute(
-      path: '/pharmacist/rx/:id',
-      builder: (_, GoRouterState state) =>
-          PrescriptionReviewScreen(id: state.pathParameters['id']!),
-    ),
-    GoRoute(
-      path: '/pharmacist/prescription/:id',
-      builder: (_, GoRouterState state) =>
-          PrescriptionReviewScreen(id: state.pathParameters['id']!),
-    ),
-    GoRoute(path: '/rider', builder: (_, __) => const RiderDashboardScreen()),
-    GoRoute(
-      path: '/rider/order/:id',
-      builder: (_, GoRouterState state) =>
-          RiderOrderDetailScreen(id: state.pathParameters['id']!),
-    ),
-    GoRoute(path: '/admin', builder: (_, __) => const AdminDashboardScreen()),
-    GoRoute(
-      path: '/admin/users',
-      builder: (_, __) => const UserManagementScreen(),
-    ),
-    GoRoute(
-      path: '/admin/products/add',
-      builder: (_, __) => const ProductFormScreen(),
-    ),
-    GoRoute(
-      path: '/admin/products',
-      builder: (_, __) => const AdminProductListScreen(),
-    ),
-    GoRoute(
-      path: '/admin/offers',
-      builder: (_, __) => const AdminOfferManagementScreen(),
-    ),
-    GoRoute(
-      path: '/admin/suggestions',
-      builder: (_, __) => const AdminSuggestionScreen(),
-    ),
-    GoRoute(
-      path: '/admin/lab-bookings',
-      builder: (_, __) => const AdminLabBookingScreen(),
-    ),
-    GoRoute(
-      path: '/admin/categories',
-      builder: (_, __) => const AdminCategoryScreen(),
-    ),
-    GoRoute(
-      path: '/admin/products/edit/:id',
-      builder: (_, GoRouterState state) =>
-          ProductFormScreen(productId: state.pathParameters['id']),
-    ),
-    GoRoute(
-      path: '/admin/lab-tech',
-      builder: (_, __) => const LabTechDashboardScreen(),
-    ),
-    GoRoute(
-      path: '/lab-tech',
-      builder: (_, __) => const LabTechDashboardScreen(),
-    ),
-  ],
-);
+      ),
+      GoRoute(
+        path: '/orders/:id',
+        builder: (_, GoRouterState state) =>
+            OrderDetailScreen(id: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/prescriptions',
+        builder: (context, __) => BlocProvider(
+          create: (context) => PrescriptionCubit(
+            repository: getIt<PrescriptionRepository>(),
+          ),
+          child: const PrescriptionListScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/prescriptions/upload',
+        builder: (context, __) => BlocProvider(
+          create: (context) => PrescriptionCubit(
+            repository: getIt<PrescriptionRepository>(),
+          ),
+          child: const PrescriptionUploadScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/lab-test/:id',
+        builder: (_, GoRouterState state) =>
+            LabTestDetailScreen(id: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/lab-test/book/:id',
+        builder: (_, GoRouterState state) =>
+            LabTestBookingScreen(id: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/account/edit',
+        builder: (_, __) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        path: '/account/initialAddresses',
+        builder: (_, __) => const AddressBookScreen(),
+      ),
+      GoRoute(
+        path: '/account/initialAddresses/add',
+        builder: (_, __) => const AddEditAddressScreen(),
+      ),
+      GoRoute(
+        path: '/account/cashback',
+        builder: (_, __) => const CashbackWalletScreen(),
+      ),
+      GoRoute(
+        path: '/account/notifications',
+        builder: (_, __) => const NotificationListScreen(),
+      ),
+      GoRoute(
+        path: '/account/product-reviews',
+        builder: (_, __) => const ProductReviewsScreen(),
+      ),
+      GoRoute(
+        path: '/account/rider-reviews',
+        builder: (_, __) => const RiderReviewsScreen(),
+      ),
+      GoRoute(
+        path: '/account/settings',
+        builder: (_, __) => const AccountSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/account/lab-orders',
+        builder: (_, __) => const LabTestOrdersScreen(),
+      ),
+      GoRoute(
+        path: '/account/lab-bookings',
+        builder: (_, __) => const LabBookingsScreen(),
+      ),
+      GoRoute(
+        path: '/account/lab-reports',
+        builder: (_, __) => const LabReportsScreen(),
+      ),
+      GoRoute(
+        path: '/account/manage-patients',
+        builder: (_, __) => const ManagePatientsScreen(),
+      ),
+      GoRoute(
+        path: '/account/wishlist',
+        builder: (_, __) => const WishlistScreen(),
+      ),
+      GoRoute(
+        path: '/account/notified-products',
+        builder: (_, __) => const NotifiedProductsScreen(),
+      ),
+      GoRoute(
+        path: '/account/suggest-product',
+        builder: (_, __) => const SuggestProductScreen(),
+      ),
+      GoRoute(
+        path: '/account/transactions',
+        builder: (_, __) => const TransactionHistoryScreen(),
+      ),
+      GoRoute(
+        path: '/account/offers',
+        builder: (_, __) => const OffersScreen(),
+      ),
+      GoRoute(
+        path: '/account/referral',
+        builder: (_, __) => const ReferAndEarnScreen(),
+      ),
+      GoRoute(
+        path: '/account/business',
+        builder: (_, __) => const BusinessDashboardScreen(),
+      ),
+      GoRoute(path: '/about', builder: (_, __) => const AboutUsScreen()),
+      GoRoute(path: '/contact', builder: (_, __) => const ContactScreen()),
+      GoRoute(path: '/faq', builder: (_, __) => const FaqScreen()),
+      GoRoute(path: '/privacy', builder: (_, __) => const PrivacyPolicyScreen()),
+      GoRoute(path: '/terms', builder: (_, __) => const TermsScreen()),
+      GoRoute(
+        path: '/return-policy',
+        builder: (_, __) => const ReturnPolicyScreen(),
+      ),
+      GoRoute(path: '/blog', builder: (_, __) => const HealthTipsBlogScreen()),
+      GoRoute(
+        path: '/doctor-consultation',
+        builder: (_, __) => const DoctorConsultationScreen(),
+      ),
+      GoRoute(path: '/jobs', builder: (_, __) => const CareersScreen()),
+      GoRoute(
+        path: '/pharmacist',
+        builder: (context, __) => BlocProvider(
+          create: (context) => PharmacistCubit(),
+          child: const PharmacistDashboardScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/pharmacist/rx/:id',
+        builder: (context, GoRouterState state) => BlocProvider(
+          create: (context) => PharmacistCubit(),
+          child: PrescriptionReviewScreen(id: state.pathParameters['id']!),
+        ),
+      ),
+      GoRoute(
+        path: '/pharmacist/prescription/:id',
+        builder: (context, GoRouterState state) => BlocProvider(
+          create: (context) => PharmacistCubit(),
+          child: PrescriptionReviewScreen(id: state.pathParameters['id']!),
+        ),
+      ),
+      GoRoute(
+        path: '/rider',
+        builder: (context, __) => BlocProvider(
+          create: (context) => RiderCubit(
+            orderRepository: getIt<OrderRepository>(),
+          ),
+          child: const RiderDashboardScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/rider/order/:id',
+        builder: (context, GoRouterState state) => BlocProvider(
+          create: (context) => RiderCubit(
+            orderRepository: getIt<OrderRepository>(),
+          ),
+          child: RiderOrderDetailScreen(id: state.pathParameters['id']!),
+        ),
+      ),
+      GoRoute(
+        path: '/admin',
+        builder: (context, __) => BlocProvider(
+          create: (context) => AdminCubit(
+            orderRepository: getIt<OrderRepository>(),
+            userRepository: getIt<UserRepository>(),
+            offerRepository: getIt<OfferRepository>(),
+            suggestionRepository: getIt<SuggestionRepository>(),
+            labRepository: getIt<LabRepository>(),
+          ),
+          child: const AdminDashboardScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/admin/users',
+        builder: (context, __) => BlocProvider(
+          create: (context) => AdminCubit(
+            orderRepository: getIt<OrderRepository>(),
+            userRepository: getIt<UserRepository>(),
+            offerRepository: getIt<OfferRepository>(),
+            suggestionRepository: getIt<SuggestionRepository>(),
+            labRepository: getIt<LabRepository>(),
+          ),
+          child: const UserManagementScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/admin/products/add',
+        builder: (context, __) => BlocProvider(
+          create: (context) => AdminCubit(
+            orderRepository: getIt<OrderRepository>(),
+            userRepository: getIt<UserRepository>(),
+            offerRepository: getIt<OfferRepository>(),
+            suggestionRepository: getIt<SuggestionRepository>(),
+            labRepository: getIt<LabRepository>(),
+          ),
+          child: const ProductFormScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/admin/products',
+        builder: (context, __) => BlocProvider(
+          create: (context) => AdminCubit(
+            orderRepository: getIt<OrderRepository>(),
+            userRepository: getIt<UserRepository>(),
+            offerRepository: getIt<OfferRepository>(),
+            suggestionRepository: getIt<SuggestionRepository>(),
+            labRepository: getIt<LabRepository>(),
+          ),
+          child: const AdminProductListScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/admin/offers',
+        builder: (context, __) => BlocProvider(
+          create: (context) => AdminCubit(
+            orderRepository: getIt<OrderRepository>(),
+            userRepository: getIt<UserRepository>(),
+            offerRepository: getIt<OfferRepository>(),
+            suggestionRepository: getIt<SuggestionRepository>(),
+            labRepository: getIt<LabRepository>(),
+          ),
+          child: const AdminOfferManagementScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/admin/suggestions',
+        builder: (context, __) => BlocProvider(
+          create: (context) => AdminCubit(
+            orderRepository: getIt<OrderRepository>(),
+            userRepository: getIt<UserRepository>(),
+            offerRepository: getIt<OfferRepository>(),
+            suggestionRepository: getIt<SuggestionRepository>(),
+            labRepository: getIt<LabRepository>(),
+          ),
+          child: const AdminSuggestionScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/admin/lab-bookings',
+        builder: (context, __) => BlocProvider(
+          create: (context) => AdminCubit(
+            orderRepository: getIt<OrderRepository>(),
+            userRepository: getIt<UserRepository>(),
+            offerRepository: getIt<OfferRepository>(),
+            suggestionRepository: getIt<SuggestionRepository>(),
+            labRepository: getIt<LabRepository>(),
+          ),
+          child: const AdminLabBookingScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/admin/categories',
+        builder: (context, __) => BlocProvider(
+          create: (context) => AdminCubit(
+            orderRepository: getIt<OrderRepository>(),
+            userRepository: getIt<UserRepository>(),
+            offerRepository: getIt<OfferRepository>(),
+            suggestionRepository: getIt<SuggestionRepository>(),
+            labRepository: getIt<LabRepository>(),
+          ),
+          child: const AdminCategoryScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/admin/products/edit/:id',
+        builder: (context, GoRouterState state) => BlocProvider(
+          create: (context) => AdminCubit(
+            orderRepository: getIt<OrderRepository>(),
+            userRepository: getIt<UserRepository>(),
+            offerRepository: getIt<OfferRepository>(),
+            suggestionRepository: getIt<SuggestionRepository>(),
+            labRepository: getIt<LabRepository>(),
+          ),
+          child: ProductFormScreen(productId: state.pathParameters['id']),
+        ),
+      ),
+      GoRoute(
+        path: '/admin/lab-tech',
+        builder: (context, __) => BlocProvider(
+          create: (context) => LabTechCubit(
+            labRepository: getIt<LabRepository>(),
+          ),
+          child: const LabTechDashboardScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/lab-tech',
+        builder: (context, __) => BlocProvider(
+          create: (context) => LabTechCubit(
+            labRepository: getIt<LabRepository>(),
+          ),
+          child: const LabTechDashboardScreen(),
+        ),
+      ),
+    ],
+  );
+}

@@ -30,6 +30,7 @@ import 'features/roles/rider/cubit/rider_cubit.dart';
 import 'features/search/cubit/search_cubit.dart';
 import 'firebase_options.dart';
 import 'core/services/notification_service.dart';
+import 'core/di/service_locator.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,9 +39,9 @@ Future<void> main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    // Initialize services in background to prevent blocking main thread
+    // Initialize services in background
     NotificationService.init();
-    DatabaseInitializer.seedDatabaseIfEmpty();
+    await setupServiceLocator();
   } catch (e) {
     debugPrint("Firebase initialization error: $e");
   }
@@ -57,14 +58,6 @@ Future<void> main() async {
     wishlistCubit.load(),
   ]);
 
-  final orderRepository = OrderRepository();
-  final labTestRepository = LabTestRepository();
-  final prescriptionRepository = PrescriptionRepository();
-  final userRepository = UserRepository();
-  final offerRepository = OfferRepository();
-  final suggestionRepository = SuggestionRepository();
-  final labRepository = LabRepository();
-
   runApp(
     MultiBlocProvider(
       providers: [
@@ -73,23 +66,6 @@ Future<void> main() async {
         BlocProvider.value(value: wishlistCubit),
         BlocProvider(create: (_) => AuthCubit()),
         BlocProvider(create: (_) => CartCubit()),
-        BlocProvider(create: (_) => CheckoutCubit()),
-        BlocProvider(create: (_) => HomeCubit(offerRepository: offerRepository)..load()),
-        BlocProvider(create: (_) => OrdersCubit()..load()),
-        BlocProvider(create: (_) => ProductCubit()..load()),
-        BlocProvider(create: (_) => LabTestCubit(repository: labTestRepository)..load()),
-        BlocProvider(create: (_) => PrescriptionCubit(repository: prescriptionRepository)),
-        BlocProvider(create: (_) => SearchCubit()),
-        BlocProvider(create: (_) => RiderCubit(orderRepository: orderRepository)),
-        BlocProvider(create: (_) => PharmacistCubit()),
-        BlocProvider(create: (_) => AdminCubit(
-          orderRepository: orderRepository,
-          userRepository: userRepository,
-          offerRepository: offerRepository,
-          suggestionRepository: suggestionRepository,
-          labRepository: labRepository,
-        )),
-        BlocProvider(create: (_) => LabTechCubit(labRepository: labRepository)),
       ],
       child: const HealMealApp(),
     ),

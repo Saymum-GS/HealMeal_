@@ -6,8 +6,23 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_cubit.dart';
 
-class HealMealApp extends StatelessWidget {
+import 'features/auth/cubit/auth_cubit.dart';
+
+class HealMealApp extends StatefulWidget {
   const HealMealApp({super.key});
+
+  @override
+  State<HealMealApp> createState() => _HealMealAppState();
+}
+
+class _HealMealAppState extends State<HealMealApp> {
+  late final GoRouter _router;
+
+  @override
+  void initState() {
+    super.initState();
+    _router = createRouter(context.read<AuthCubit>());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +39,7 @@ class HealMealApp extends StatelessWidget {
               locale: locale,
               supportedLocales: const [Locale('en'), Locale('bn')],
               localizationsDelegates: AppTheme.localizationsDelegates,
-              routerConfig: appRouter,
+              routerConfig: _router,
             );
           },
         );
